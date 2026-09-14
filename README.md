@@ -1,52 +1,77 @@
-# Style Finder
+# ✨ Multimodal Style Finder Application
 
-Style Finder is a small Gradio application for analyzing fashion images. Users can upload an outfit image, or choose one of the included examples, and the app returns a catalog-style fashion analysis with visually similar item details.
+> 📸 Upload a fit. Get the details. Look sharp. 👔
 
-## What It Does
+Style Finder is a fashion analysis app that identifies clothing items from images and matches them to a curated catalog. Powered by computer vision and a multimodal LLM, it turns any outfit photo into actionable style intel.
 
-The app combines image embeddings, similarity search, and a vision language model:
+## How It Works
 
-- Encodes uploaded images with a pretrained ResNet50 model.
-- Compares the uploaded image against precomputed embeddings in `swift-style-embeddings.pkl`.
-- Finds the closest matching outfit and related items from the dataset.
-- Sends the uploaded image and matched item details to IBM watsonx using the configured Llama vision model.
-- Displays a formatted fashion analysis in the Gradio interface.
-
-## Project Structure
-
-```text
-app.py                         Main Gradio application
-config.py                      Model, region, and image processing settings
-models/image_processor.py      Image encoding and similarity matching
-models/llm_service.py          IBM watsonx / Llama vision model integration
-utils/helpers.py               Response formatting and dataset helpers
-examples/                      Sample images for the UI
-swift-style-embeddings.pkl     Precomputed fashion image embeddings dataset
-requirements.txt               Python dependencies
+```
+Your Image → ResNet50 → Similarity Search → Qwen Vision → Styled Results
 ```
 
-## Getting Started
+1. **🖼️ Encode** - ResNet50 converts your image into a feature vector
+2. **🎯 Match** - Cosine similarity finds the closest outfit in the dataset
+3. **👁️ Analyze** - Qwen 3.8 27B vision model describes colors, patterns, materials, and style
+4. **✨ Display** - Gradio serves up a clean, formatted breakdown with item links
 
-Install the dependencies:
+## 🛠️ Tech Stack
+
+| Layer | Tech |
+|-------|------|
+| **UI** | Gradio 5.x |
+| **Vision Model** | Qwen 3.8 27B via Groq (free tier) |
+| **LLM Framework** | LangChain |
+| **Image Embeddings** | PyTorch + ResNet50 |
+| **Similarity** | scikit-learn cosine similarity |
+
+## Quick Start
 
 ```bash
+# 1. Clone and enter
+git clone <repo-url> && cd style-finder
+
+# 2. Install deps
 pip install -r requirements.txt
-```
 
-Run the app:
+# 3. Get your free Groq API key at https://console.groq.com
+cp .env.example .env
+# Edit .env → add your GROQ_API_KEY
 
-```bash
+# 4. Run
 python app.py
 ```
 
-By default, the Gradio app launches on:
+🌐 App launches at `http://127.0.0.1:5000` with a shareable public link.
 
-```text
-http://127.0.0.1:5000
+## Project Structure
+
+```
+app.py                     Gradio app + orchestration
+config.py                  Model config + thresholds
+models/
+  ├── llm_service.py       LangChain + Groq integration
+  └── image_processor.py   ResNet50 encoding + matching
+utils/helpers.py           Response formatting
+examples/                  Sample images
+swift-style-embeddings.pkl Pre-computed fashion embeddings
 ```
 
 ## Configuration
 
-Core settings live in `config.py`, including the IBM watsonx model ID, project ID, region, image size, normalization values, and similarity threshold.
+All tunables in `config.py`:
 
-The app requires access to IBM watsonx AI for the Llama vision response generation. Make sure your environment is authenticated before running the application.
+```python
+GROQ_MODEL_ID = "qwen/qwen3.8-27b"  # Vision-capable multimodal model
+MODEL_TEMPERATURE = 0.2             # Lower = more focused
+MODEL_MAX_TOKENS = 2000             # Response length cap
+SIMILARITY_THRESHOLD = 0.8          # Match confidence cutoff
+```
+
+## Why It's Free
+
+Groq's free tier gives you:
+- 500K tokens/day
+- ~30 requests/minute  
+- No credit card required
+- Blazing fast LPU inference (500+ tokens/sec)
