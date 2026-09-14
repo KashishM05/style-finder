@@ -2,10 +2,15 @@
 Configuration settings for the Style Finder application.
 """
 
-# Model and API configuration
-LLAMA_MODEL_ID = "meta-llama/llama-4-maverick-17b-128e-instruct-fp8"
-PROJECT_ID = "skills-network"  # Default project ID for lab environment
-REGION = "us-south"
+# Groq model configuration
+# Qwen 3.8 27B - multimodal model supporting text + image inputs
+# Supports thinking/instruct modes, tool use, and JSON mode
+GROQ_MODEL_ID = "qwen/qwen3.8-27b"
+
+# Model parameters
+MODEL_TEMPERATURE = 0.2
+MODEL_TOP_P = 0.6
+MODEL_MAX_TOKENS = 2000
 
 # Image processing settings
 IMAGE_SIZE = (224, 224)

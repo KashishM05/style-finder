@@ -6,11 +6,15 @@ import gradio as gr
 import pandas as pd
 import os
 from tempfile import NamedTemporaryFile
+from dotenv import load_dotenv
+
+# Load environment variables from .env file
+load_dotenv()
 
 # Import local modules
 from models.image_processor import ImageProcessor
 from models.llm_service import LlamaVisionService
-from utils.helpers import get_all_items_for_image, format_alternatives_response, process_response
+from utils.helpers import get_all_items_for_image, process_response
 import config
 
 class StyleFinderApp:
@@ -45,9 +49,10 @@ class StyleFinderApp:
         )
         
         self.llm_service = LlamaVisionService(
-            model_id=config.LLAMA_MODEL_ID,
-            project_id=config.PROJECT_ID,
-            region=config.REGION
+            model_id=config.GROQ_MODEL_ID,
+            temperature=config.MODEL_TEMPERATURE,
+            top_p=config.MODEL_TOP_P,
+            max_tokens=config.MODEL_MAX_TOKENS
         )
 
     def process_image(self, image):
